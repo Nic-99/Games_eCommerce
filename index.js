@@ -142,7 +142,20 @@ app.put("/users/:id/roles",async (req,res) =>{
 })
 
 // TODO --> Copia del edit roles para isActive
-
+app.put("/users/:id/isActive",async (req,res) =>{
+    
+  const isActive = req.body.isActive;
+  try{
+    const result = await UsrController.editActive(isActive,req.params.id);
+    if(result){
+      res.status(200).json(result);
+    }else{
+      res.status(404).send("El usuario no existe.");
+    }  
+  }catch(error){  
+     res.status(500).send("Error");
+  } 
+})
 
 // --------------------------------------------------------------------
 
@@ -199,7 +212,6 @@ app.post("/games",async (req,res) =>{
     
 });
 
-
 // Modifico un juego
 app.put("/games/:id",async (req,res) =>{
 
@@ -235,26 +247,21 @@ app.delete("/games/:id", async(req,res) =>{
     }
 });
 
-// Edito roles del juego --> Probablemente no sea necesario
-/* 
-app.put("/users/:id/roles",async (req,res) =>{
+// Edito si esta activo el juego
+app.put("/games/:id/isActive",async (req,res) =>{
     
-    const roles = req.body.roles;
+    const isActive = req.body.isActive;
     try{
-      
-      const result = await UsrController.editRoles(roles,req.params.id);
+      const result = await GamesController.editActive(isActive,req.params.id);
       if(result){
         res.status(200).json(result);
       }else{
-        res.status(404).send("El usuario no existe.");
+        res.status(404).send("El juego no existe.");
       }  
     }catch(error){  
        res.status(500).send("Error");
     } 
-})
- */
-
-// TODO --> Copia del edit roles para isActive
+});
 
 // --------------------------------------------------------------------
 
