@@ -43,9 +43,6 @@ const getAllUsers = async (limit,offset) => {
 const getUser = async(id) => {
 
     const user = await Usr.findById(id);
-
-    // await Usr.findOne({ _id: req.params.id })
-
     return user;
 }
 
@@ -63,7 +60,11 @@ const editRoles = async(roles,id) => {
     return result;
 }
 
-// TODO --> Copia del edit roles para isActive
+const editActive = async(isActive,id) => {
+
+    const result = await Usr.findByIdAndUpdate(id,{$set:{isActive:isActive}},{new:true});
+    return result;
+}
 
 const deleteUser = async(id) => {
 
@@ -72,4 +73,4 @@ const deleteUser = async(id) => {
     return result;
 }
 
-module.exports = { addUser, getAllUsers, getUser, editUser, editRoles, deleteUser }
+module.exports = { addUser, getAllUsers, getUser, editUser, editRoles, editActive, deleteUser }
