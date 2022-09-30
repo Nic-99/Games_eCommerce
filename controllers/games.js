@@ -1,3 +1,10 @@
+/* 
+	TODO:
+		- Metodos:
+            - Agregar a carrito --> previo/auth previo a asociar al usuario
+            - Agregar a libreria --> para asociar a un usuario
+ */
+
 require('mongoose');
 const Game = require('../models/games');
 

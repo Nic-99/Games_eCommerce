@@ -159,8 +159,15 @@ app.put("/users/:id/isActive",async (req,res) =>{
 
 // --------------------------------------------------------------------
 
+/* 
+	TODO:
+    - Crear endpoint "ordenes" --> funciona como el carrito
+    - Crear endpoint "libreria" --> forma de asociar articulos con usu
+*/
+
+
 // Get de todos los juegos
-app.get("/games",/*Middleware.verify,*/async (req,res) =>{
+app.get("/catalogo",/*Middleware.verify,*/async (req,res) =>{
 
   let limit = req.query.limit;
   let offset = req.query.offset;
@@ -176,7 +183,7 @@ app.get("/games",/*Middleware.verify,*/async (req,res) =>{
 });
 
 // Get Info de un juego
-app.get("/games/:id",async (req,res) =>{
+app.get("/catalogo/:id",async (req,res) =>{
 
     let gameId =  req.params.id;
 
@@ -193,7 +200,7 @@ app.get("/games/:id",async (req,res) =>{
 });
 
 // Creo un nuevo juego
-app.post("/games",async (req,res) =>{
+app.post("/catalogo",async (req,res) =>{
     
     let name = req.body.name;
     let autor = req.body.autor;
@@ -213,7 +220,7 @@ app.post("/games",async (req,res) =>{
 });
 
 // Modifico un juego
-app.put("/games/:id",async (req,res) =>{
+app.put("/catalogo/:id",async (req,res) =>{
 
     const game = { _id: req.params.id, ...req.body };
     //             {_id: req.params.id, name: req.body.name, lastname, email }
@@ -232,7 +239,7 @@ app.put("/games/:id",async (req,res) =>{
 });
 
 // Elimino un juego
-app.delete("/games/:id", async(req,res) =>{
+app.delete("/catalogo/:id", async(req,res) =>{
 
     try{
       const result = await GamesController.deleteGame(req.params.id);
@@ -248,7 +255,7 @@ app.delete("/games/:id", async(req,res) =>{
 });
 
 // Edito si esta activo el juego
-app.put("/games/:id/isActive",async (req,res) =>{
+app.put("/catalogo/:id/isActive",async (req,res) =>{
     
     const isActive = req.body.isActive;
     try{
