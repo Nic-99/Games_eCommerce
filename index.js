@@ -272,7 +272,7 @@ app.put("/catalogo/:id/isActive",async (req,res) =>{
 // --------------------------------------------------------------------
 
 // Agregar juego a carrito
-app.post("/catalogo/cart/:id",/* Middleware.verify, */async (req,res) => {
+app.post("/catalogo/cart/:id",Middleware.verify, async (req,res) => {
   let userId = req.params.id;
   let gameName = req.body.gameName;
 
@@ -296,6 +296,21 @@ app.get("/catalogo/cart/:id", async(req,res) =>{
     res.status(200).json(result);
   }catch(error){
       res.status(500).send("Error. Intente más tarde.")
+  }
+});
+
+app.delete("/catalogo/cart/:id",Middleware.verify, async(req,res) => {
+
+  try{
+    const result = await CartController.removeItem(req.params.id,req.body.gameName);
+    if(result){
+      res.status(200).send("Item removido");
+    }else{
+      res.status(404).send("No se ha podido remover el item.");
+    }  
+
+  }catch(error){
+    res.status(500).send("Error");
   }
 });
 
