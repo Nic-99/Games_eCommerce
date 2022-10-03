@@ -1,25 +1,25 @@
-const { interfaces } = require('mocha');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const gameSchema = new Schema({
 
 	name:{
 		type: String,
-		required:true
+		required:true,
+		index: {unique: true, dropDups: true}
     },
-    autor:{
+    author:{
 		type: String,
 		required:true
 	},
-	precio:{
+	price:{
 		type: Number,
 		required:true
 	},
-	descripcion:{
+	description:{
 		type: String,
 		required:true
 	},
-	categoria:{
+	category:{
 		type: Array,
 		required:true,
 		default: ['single_player']

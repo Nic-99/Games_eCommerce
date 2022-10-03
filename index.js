@@ -12,7 +12,7 @@ const UsrController = require('./controllers/user');
 const AuthController = require('./controllers/auth');
 const Middleware = require('./middleware/auth-middleware');
 const GamesController = require('./controllers/games');
-
+const CartController = require('./controllers/cart');
 
 mongoose
   .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -35,10 +35,12 @@ app.post("/",(req,res) => {
 });
 
 // Get de todos los usuarios
-app.get("/users",/*Middleware.verify,*/async (req,res) =>{
+app.get("/users",Middleware.verify,async (req,res) =>{
 
   let limit = req.query.limit;
   let offset = req.query.offset;
+  
+  console.log(decode.roles);
 
   try{
       const results = await UsrController.getAllUsers(limit,offset);
@@ -51,7 +53,7 @@ app.get("/users",/*Middleware.verify,*/async (req,res) =>{
 });
 
 // Get Info de un usuario
-app.get("/users/:id",async (req,res) =>{
+app.get("/users/:id",Middleware.verify,async (req,res) =>{
 
     let userId =  req.params.id;
 
@@ -68,7 +70,7 @@ app.get("/users/:id",async (req,res) =>{
 });
 
 // Creo un nuevo usuario
-app.post("/users",async (req,res) =>{
+app.post("/users",Middleware.verify,async (req,res) =>{
     
     let name = req.body.name;
     let lastname = req.body.lastname;
@@ -89,7 +91,7 @@ app.post("/users",async (req,res) =>{
 });
 
 // Modifico un usuario
-app.put("/users/:id",async (req,res) =>{
+app.put("/users/:id",Middleware.verify,async (req,res) =>{
 
     const user = { _id: req.params.id, ...req.body };
     //             {_id: req.params.id, name: req.body.name, lastname, email }
@@ -108,7 +110,7 @@ app.put("/users/:id",async (req,res) =>{
 });
 
 // Elimino un usuario
-app.delete("/users/:id", async(req,res) =>{
+app.delete("/users/:id",Middleware.verify,async(req,res) =>{
 
     try{
 
@@ -125,7 +127,7 @@ app.delete("/users/:id", async(req,res) =>{
 });
 
 // Edito roldes del usuario
-app.put("/users/:id/roles",async (req,res) =>{
+app.put("/users/:id/roles",Middleware.verify,async (req,res) =>{
     
     const roles = req.body.roles;
     try{
@@ -142,7 +144,7 @@ app.put("/users/:id/roles",async (req,res) =>{
 })
 
 // TODO --> Copia del edit roles para isActive
-app.put("/users/:id/isActive",async (req,res) =>{
+app.put("/users/:id/isActive",Middleware.verify,async (req,res) =>{
     
   const isActive = req.body.isActive;
   try{
@@ -159,15 +161,8 @@ app.put("/users/:id/isActive",async (req,res) =>{
 
 // --------------------------------------------------------------------
 
-/* 
-	TODO:
-    - Crear endpoint "ordenes" --> funciona como el carrito
-    - Crear endpoint "libreria" --> forma de asociar articulos con usu
-*/
-
-
 // Get de todos los juegos
-app.get("/catalogo",/*Middleware.verify,*/async (req,res) =>{
+app.get("/catalogo",async (req,res) =>{
 
   let limit = req.query.limit;
   let offset = req.query.offset;
@@ -200,14 +195,17 @@ app.get("/catalogo/:id",async (req,res) =>{
 });
 
 // Creo un nuevo juego
-app.post("/catalogo",async (req,res) =>{
+app.post("/catalogo",Middleware.verify,async (req,res) =>{
     
     let name = req.body.name;
-    let autor = req.body.autor;
+    let author = req.body.author;
+    let price = req.body.price;
+    let description = req.body.description;
+    let category = req.body.category;
     let isActive = req.body.isActive;
 
     try{
-      const result = await GamesController.addGame(name,autor,isActive);
+      const result = await GamesController.addGame(name,author,price,description,category,isActive);
       if(result){
         res.status(201).send("Juego creado correctamente"); // 201
       }else{
@@ -220,7 +218,7 @@ app.post("/catalogo",async (req,res) =>{
 });
 
 // Modifico un juego
-app.put("/catalogo/:id",async (req,res) =>{
+app.put("/catalogo/:id",Middleware.verify,async (req,res) =>{
 
     const game = { _id: req.params.id, ...req.body };
     //             {_id: req.params.id, name: req.body.name, lastname, email }
@@ -239,7 +237,7 @@ app.put("/catalogo/:id",async (req,res) =>{
 });
 
 // Elimino un juego
-app.delete("/catalogo/:id", async(req,res) =>{
+app.delete("/catalogo/:id",Middleware.verify,async(req,res) =>{
 
     try{
       const result = await GamesController.deleteGame(req.params.id);
@@ -270,9 +268,36 @@ app.put("/catalogo/:id/isActive",async (req,res) =>{
     } 
 });
 
+// TODO --> crear edits particulares para cada propiedad de los juegos?
+
 // --------------------------------------------------------------------
 
-app.post("/auth/login", async (req,res) => {
+/* 
+	TODO:
+    - Crear endpoint "ordenes" --> funciona como el carrito
+    - Crear endpoint "libreria" --> forma de asociar articulos con usu
+*/
+
+// Agregar juego a carrito
+app.post("/catalogo/cart/:id",/* Middleware.verify, */async (req,res) => {
+    let userId = req.params.id; // al tener el login previo en teoria ya tengo el id del usuario
+    let gameName = req.body.gameName;
+
+    try{
+      const result = await CartController.addItem(userId, gameName);
+      if(result){
+        res.status(201).send("Juego se a agregado correctamente"); // 201
+      }else{
+        res.status(409).send("El juego ya esta agregado"); // 409
+      }  
+    }catch(error){
+      res.status(500).send("Error al agregar el juego."); //500
+    }  
+
+});
+
+// --------------------------------------------------------------------
+app.post("/login", async (req,res) => {
 
     const email = req.body.email;
     const password = req.body.password;
@@ -286,7 +311,7 @@ app.post("/auth/login", async (req,res) => {
     }catch(error){
         res.status(500).send("Error");
     }  
-})
+});
 
 http.listen(PORT, () => {
   console.log(`Listening to ${PORT}`);

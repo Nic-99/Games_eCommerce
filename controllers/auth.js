@@ -10,15 +10,14 @@ const login = async(email,password) => {
         .digest('hex');
 
     const  result = await Usr.findOne({ email: email, isActive:true, password:cryptoPass })
-    
+    console.log(result.roles);
     if (result){
-            // retorno token
-            //jwt.sign('payload','secret_key','options')
-            //const token = jwt.sign({ foo: 'bar' }, 'secret_key');    
-            const token = "fgdgbrfeer6g1df23g86ef2gs";
-            return token;
-    }
-    return null; // retorno 
+        if(result.roles == 'user'){
+            return token = jwt.sign({id: result._id, admin: false },process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRES_IN});
+        }if(result.roles == 'admin'){
+            return token = jwt.sign({id: result._id, admin:true },process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRES_IN});
+        }
+    }return null;
 
 }
 

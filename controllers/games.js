@@ -8,22 +8,18 @@
 require('mongoose');
 const Game = require('../models/games');
 
-
-const addGame = async (name,autor,isActive) => {
+const addNewGame = async (name,author,price,description,category,isActive) => {
 
     let existGame = await Game.findOne({ name: name });
     console.log(existGame);
     if(!existGame) {
-        /* 
-        const cryptoPass = require('crypto')
-        .createHash('sha256')
-        .update(password)
-        .digest('hex');
-         */
         const newGame = new Game(
             {              
                 name: name,
-                autor:autor,
+                author:author,
+                price:price,
+                description:description,
+                category:category,
                 isActive:isActive
             }
         );
@@ -67,4 +63,4 @@ const deleteGame = async(id) => {
     return result;
 }
 
-module.exports = { addGame, getAllGames, getGame, editGame, editActive, deleteGame }
+module.exports = { addNewGame, getAllGames, getGame, editGame, editActive, deleteGame }
