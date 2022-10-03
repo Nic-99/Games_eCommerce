@@ -69,7 +69,7 @@ app.get("/users/:id",Middleware.verify,async (req,res) =>{
 });
 
 // Creo un nuevo usuario
-app.post("/users",/* Middleware.verify, */async (req,res) =>{
+app.post("/users",Middleware.verify,async (req,res) =>{
     
     let name = req.body.name;
     let lastname = req.body.lastname;
@@ -194,7 +194,7 @@ app.get("/catalogo/:id",async (req,res) =>{
 });
 
 // Creo un nuevo juego
-app.post("/catalogo",/* Middleware.verify, */async (req,res) =>{
+app.post("/catalogo",Middleware.verify,async (req,res) =>{
     
     let name = req.body.name;
     let author = req.body.author;
@@ -289,6 +289,7 @@ app.post("/catalogo/cart/:id",Middleware.verify, async (req,res) => {
 
 });
 
+// Obtener el carrito del ususario
 app.get("/catalogo/cart/:id", async(req,res) =>{
   let userId = req.params.id;
   try{
@@ -299,6 +300,7 @@ app.get("/catalogo/cart/:id", async(req,res) =>{
   }
 });
 
+// Remover item del carrito
 app.delete("/catalogo/cart/:id",Middleware.verify, async(req,res) => {
 
   try{
