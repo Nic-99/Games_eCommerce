@@ -1,29 +1,20 @@
-/* 
-	TODO:
-		- Metodos:
-            - Agregar a carrito --> previo/auth previo a asociar al usuario
-            - Agregar a libreria --> para asociar a un usuario
- */
-
 require('mongoose');
 const Game = require('../models/games');
 
-const addNewGame = async (name,author,price,description,category,isActive) => {
+const addGame = async (name,author,price,description,category,isActive) => {
 
     let existGame = await Game.findOne({ name: name });
     console.log(existGame);
     if(!existGame) {
-        const newGame = new Game(
-            {              
-                name: name,
-                author:author,
-                price:price,
-                description:description,
-                category:category,
-                isActive:isActive
-            }
-        );
-
+        let data = {              
+            name: name,
+            author:author,
+            price:price,
+            description:description,
+            category:category,
+            isActive:isActive
+        }
+        var newGame = new Game(data);
         let game = await newGame.save(); 
         console.log("juego nuevo");
         console.log(game);
@@ -63,4 +54,4 @@ const deleteGame = async(id) => {
     return result;
 }
 
-module.exports = { addNewGame, getAllGames, getGame, editGame, editActive, deleteGame }
+module.exports = { addGame, getAllGames, getGame, editGame, editActive, deleteGame }

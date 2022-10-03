@@ -25,7 +25,6 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
-// GET - POST - DELETE - PUT - PATCH 
 
 app.get("/", (req, res) => {
   res.send("Hola estoy funcionando.");
@@ -70,7 +69,7 @@ app.get("/users/:id",Middleware.verify,async (req,res) =>{
 });
 
 // Creo un nuevo usuario
-app.post("/users",Middleware.verify,async (req,res) =>{
+app.post("/users",/* Middleware.verify, */async (req,res) =>{
     
     let name = req.body.name;
     let lastname = req.body.lastname;
@@ -195,7 +194,7 @@ app.get("/catalogo/:id",async (req,res) =>{
 });
 
 // Creo un nuevo juego
-app.post("/catalogo",Middleware.verify,async (req,res) =>{
+app.post("/catalogo",/* Middleware.verify, */async (req,res) =>{
     
     let name = req.body.name;
     let author = req.body.author;
@@ -272,28 +271,32 @@ app.put("/catalogo/:id/isActive",async (req,res) =>{
 
 // --------------------------------------------------------------------
 
-/* 
-	TODO:
-    - Crear endpoint "ordenes" --> funciona como el carrito
-    - Crear endpoint "libreria" --> forma de asociar articulos con usu
-*/
-
 // Agregar juego a carrito
 app.post("/catalogo/cart/:id",/* Middleware.verify, */async (req,res) => {
-    let userId = req.params.id; // al tener el login previo en teoria ya tengo el id del usuario
-    let gameName = req.body.gameName;
+  let userId = req.params.id;
+  let gameName = req.body.gameName;
 
-    try{
-      const result = await CartController.addItem(userId, gameName);
-      if(result){
-        res.status(201).send("Juego se a agregado correctamente"); // 201
-      }else{
-        res.status(409).send("El juego ya esta agregado"); // 409
-      }  
-    }catch(error){
-      res.status(500).send("Error al agregar el juego."); //500
+  try{
+    const result = await CartController.addItem(userId, gameName);
+    if(result){
+      res.status(201).send("Juego se a agregado correctamente"); // 201
+    }else{
+      res.status(409).send("El juego ya esta agregado"); // 409
     }  
+  }catch(error){
+    res.status(500).send("Error al agregar el juego."); //500
+  }  
 
+});
+
+app.get("/catalogo/cart/:id", async(req,res) =>{
+  let userId = req.params.id;
+  try{
+    const result = await CartController.getCart(userId);
+    res.status(200).json(result);
+  }catch(error){
+      res.status(500).send("Error. Intente más tarde.")
+  }
 });
 
 // --------------------------------------------------------------------

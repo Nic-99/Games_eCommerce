@@ -6,16 +6,16 @@ const User = require('../models/user');
 const addItem = async (id,name) => {
 
     let existGame = await Game.findOne({ name: name });
-    let existUser = await User.findById({_id:id});
+    let existUser = await User.findById(id);
 
-    if(existGame && existUser) {
-//        let cart = await Cart.findOne({userId:existUser._id});
-//        if(!cart){
+    const carts = await Cart.findOne({userId:existUser._id});
+    //if(existGame && existUser){
+        if(!carts[0]){
             const newCart = new Cart(
                 {              
-                    userId:existUser._id,
+                    userId:id,
                     items:[{
-                        gameId: existGame._id,
+                        gameId: existGame.id,
                         price: existGame.price
                     }],
                     subtotal: existGame.price
@@ -23,16 +23,14 @@ const addItem = async (id,name) => {
             );
             let cart = await newCart.save(); 
             console.log(cart);
-            return { cart }; 
-//        }
-        
-    }else{
-        return false;
-    }
+            return { cart };
+        }
+    //}
 };
 
-const getCart = async() => {
-    
+const getCart = async(id) => {
+    const cart = await Cart.findOne({userId:id});
+    return cart;
 }
 
-module.exports = { addItem }
+module.exports = { addItem, getCart }
