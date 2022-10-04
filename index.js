@@ -13,6 +13,8 @@ const AuthController = require('./controllers/auth');
 const Middleware = require('./middleware/auth-middleware');
 const GamesController = require('./controllers/games');
 const CartController = require('./controllers/cart');
+const OrderController = require('./controller/order.js');
+
 
 mongoose
   .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -26,12 +28,39 @@ app.use(cors());
 app.use(express.json());
 
 
+http.listen(PORT, () => {
+  console.log(`Listening to ${PORT}`);
+});
+
+
 app.get("/", (req, res) => {
   res.send("Hola estoy funcionando.");
 });
 app.post("/",(req,res) => {
     res.send("Llamada post");
 });
+
+// --------------------------------------------------------------------\
+
+app.post("/login", async (req,res) => {
+
+  const email = req.body.email;
+  const password = req.body.password;
+  try{
+    const result = await AuthController.login(email,password);
+    if(result){
+      res.status(200).json(result);
+    }else{
+      res.status(401).send("No puede estar aqui")
+    }
+  }catch(error){
+      res.status(500).send("Error");
+  }  
+});
+
+//-------------------------------------------------------------------------------------------------------
+// ENDPOINTS USER
+//-------------------------------------------------------------------------------------------------------
 
 // Get de todos los usuarios
 app.get("/users",Middleware.verify,async (req,res) =>{
@@ -158,7 +187,9 @@ app.put("/users/:id/isActive",Middleware.verify,async (req,res) =>{
   } 
 })
 
-// --------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------
+// ENDPOINTS GAMES
+//-------------------------------------------------------------------------------------------------------
 
 // Get de todos los juegos
 app.get("/catalogo",async (req,res) =>{
@@ -269,7 +300,9 @@ app.put("/catalogo/:id/isActive",async (req,res) =>{
 
 // TODO --> crear edits particulares para cada propiedad de los juegos?
 
-// --------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------
+// ENDPOINTS CART
+//-------------------------------------------------------------------------------------------------------
 
 // Agregar juego a carrito
 app.post("/catalogo/cart/:id",Middleware.verify, async (req,res) => {
@@ -290,7 +323,7 @@ app.post("/catalogo/cart/:id",Middleware.verify, async (req,res) => {
 });
 
 // Obtener el carrito del ususario
-app.get("/catalogo/cart/:id", async(req,res) =>{
+app.get("/catalogo/cart/:id",Middleware.verify, async(req,res) =>{
   let userId = req.params.id;
   try{
     const result = await CartController.getCart(userId);
@@ -316,23 +349,96 @@ app.delete("/catalogo/cart/:id",Middleware.verify, async(req,res) => {
   }
 });
 
-// --------------------------------------------------------------------
-app.post("/login", async (req,res) => {
 
-    const email = req.body.email;
-    const password = req.body.password;
-    try{
-      const result = await AuthController.login(email,password);
-      if(result){
-        res.status(200).json(result);
-      }else{
-        res.status(401).send("No puede estar aqui")
-      }
-    }catch(error){
-        res.status(500).send("Error");
-    }  
+//-------------------------------------------------------------------------------------------------------
+// ENDPOINTS ORDER
+//-------------------------------------------------------------------------------------------------------
+
+app.get("/orders/", async(req,res)=>{
+
+  let limit = req.query.limit;
+  let offset = req.query.offset;
+
+  try{
+      const results = await OrderController.getAllOrders(limit,offset);
+      res.status(200).json(results);
+
+  }catch(error){
+      res.status(500).send("Error. Intente más tarde.");
+  }
+
 });
 
-http.listen(PORT, () => {
-  console.log(`Listening to ${PORT}`);
+app.get("/orders/:id", async(req,res) => {
+  
+  let ordId = req.params.id;
+  try{
+
+  const order = await OrderController.getOrder(ordId);
+
+  res.status(200).json(order);
+  
+}catch(error){
+
+  res.status(500).send("Error.Intente mas tarde.")  
+}
 });
+
+
+app.post("/orders/", async(req,res)=>{
+
+  let ordnum= req.body.ordnum;
+  let customerid= req.body.customerid;
+  let date= req.body.date;
+  let detail = req.body.detail;
+  let total =req.body.total;
+  let isConfirmed =req.body.isConfirmed;
+  let domicilio = req.body.domicilio;
+  try{
+    console.log(req.body.detail);
+    const result = await OrderController.addOrder(ordnum,customerid,date,detail,total,domicilio,isConfirmed);
+
+    if ( result){
+      res.status(200).send("Orden Creada correctamente") //http 200
+    }
+    else
+    {
+      res.status(400).send("La orden ya existe") // http 400
+    }
+  }catch(error){
+    res.status(500).send("Error.Intente mas tarde") // http 500
+  }
+});
+
+
+app.delete("/order/:id", async(req,res)=>{
+
+
+  try{
+    const result = await OrderController.deleteOrder(req.params.id);
+    if (result){
+      res.status(200).send("Orden Eliminada");
+    }else{
+      res.status(400).send("La Orden no se puede eliminar");
+    } 
+  }catch(error){
+    res.status(500).send("Error.Intente mas tarde");
+  }
+});
+
+app.put("/order/:id", async(req,res)=>{
+
+  const order = { id: req.params.id, ...req.body };
+console.log(order);
+  try{
+    const result = await OrderController.editOrder(order);
+    if (result){
+      res.status(200).send("Orden Actualizada");
+    }else{
+      res.status(400).send("Orden no se puede actualizar");
+    } 
+  }catch(error){
+     res.status(500).send("Error.Intente mas tarde");
+  };
+});
+
