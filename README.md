@@ -87,7 +87,7 @@ Modelos:
 
 <h3>CONSIDERACIONES FUNCIONALES</h3>
 
-El sistema perimitira el CRUD de clientes, productos y ordenes
+El sistema perimitira el CRUD de usuarios, productos (en este caso Juegos), ordenes, un carrito de compras y una biblioteca donde se almacenan los juegos que posee cada usuario.
 
 Las ordenes de compra, se confirman cuando se ingresa en el frontend el domicilio de entrega del pedido.
 
