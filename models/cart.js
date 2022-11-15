@@ -23,7 +23,6 @@ const cartSchema = new Schema({
 	},
 	items: [itemSchema],
 	subTotal:{
-		default: 0,
 		type: Number
 	}
 },

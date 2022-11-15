@@ -6,32 +6,40 @@ const User = require('../models/user');
 const addItem = async (id,name) => {
 
     let existGame = await Game.findOne({ name: name });
-    let existUser = await User.findById(id);
+    if(existGame){
+        let subTotal = existGame.price;
+        let existUser = await User.findById(id);
 
-    const carts = await Cart.findOne({userId:existUser._id});
+        if(existUser){
+
+            const carts = await Cart.findOne({userId:existUser._id});
+            if(carts){
+                if(!carts.items.some(item => item.gameId == existGame.id)) {
+                    carts.items.push({
+                        gameId:existGame.id,
+                        price:existGame.price
+                    });
+                    carts.subTotal += subTotal;
     
-    if(existGame && existUser){
-        if(!carts[0]){
-            const newCart = new Cart(
-                {              
-                    userId:id,
-                    items:[{
-                        gameId: existGame.id,
-                        price: existGame.price
-                    }],
-                    subtotal: existGame.price
+                    const result = await Cart.findByIdAndUpdate(carts._id,carts,{new:true});
+                    return result;
                 }
-            );
-            let cart = await newCart.save(); 
-            console.log(cart);
-            return { cart };
-        }
-        carts[0].items.push({
-            gameId:existGame.id,
-            price:existGame.price
-        });
-        carts[0].subtotal = carts[0].subtotal + existGame.price;
-        return carts[0];
+            }else{                
+                const newCart = new Cart(
+                    {              
+                        userId:id,
+                        items:[{
+                            gameId: existGame.id,
+                            price: existGame.price
+                        }],
+                        subTotal: subTotal
+                    }
+                );
+                let cart = await newCart.save(); 
+                console.log(cart);
+                return { cart };
+            }
+        }       
     }
     return null;
 };
@@ -47,13 +55,14 @@ const removeItem = async(id,name) => {
         const game = await Game.findOne({ name: name });
         if(game){
             const index = cart.items.findIndex(item => item.gameId == game.id);
-            cart.items.splice(indexFound, 1);
+            cart.items.splice(index, 1);
             if (cart.items.length == 0) {
                 cart.subTotal = 0;
             }else{
                 cart.subTotal = cart.subTotal - game.price;
             }
-            return {cart};
+            const result = await Cart.findByIdAndUpdate(cart._id,cart,{new:true});
+            return result;
         }
     }
     return null;

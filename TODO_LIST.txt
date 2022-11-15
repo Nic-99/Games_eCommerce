@@ -1,0 +1,19 @@
+
+FRONTEND:
+    - Diseñar:
+        - LogIn
+        - Catalogo
+        - Cart
+        - Libreria
+        - Subida de juegos al Catalogo
+        - Registro de usuario
+
+    - Implementar animaciones
+
+BACKEND:
+    - Implementar ABM de la Libreria
+    - Arreglar el jwt para que genere el token y pode securizar la aplicacion
+    - 
+    - Crear edits particulares para cada propiedad de los juegos ???
+
+

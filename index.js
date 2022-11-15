@@ -13,7 +13,7 @@ const AuthController = require('./controllers/auth');
 const Middleware = require('./middleware/auth-middleware');
 const GamesController = require('./controllers/games');
 const CartController = require('./controllers/cart');
-const OrderController = require('./controller/order.js');
+const OrderController = require('./controllers/order.js');
 
 
 mongoose
@@ -63,12 +63,12 @@ app.post("/login", async (req,res) => {
 //-------------------------------------------------------------------------------------------------------
 
 // Get de todos los usuarios
-app.get("/users",Middleware.verify,async (req,res) =>{
+app.get("/users",/* Middleware.verify, */async (req,res) =>{
 
   let limit = req.query.limit;
   let offset = req.query.offset;
   
-  console.log(decode.roles);
+  //console.log(decode.roles);
 
   try{
       const results = await UsrController.getAllUsers(limit,offset);
@@ -81,7 +81,7 @@ app.get("/users",Middleware.verify,async (req,res) =>{
 });
 
 // Get Info de un usuario
-app.get("/users/:id",Middleware.verify,async (req,res) =>{
+app.get("/users/:id",/* Middleware.verify, */async (req,res) =>{
 
     let userId =  req.params.id;
 
@@ -98,7 +98,7 @@ app.get("/users/:id",Middleware.verify,async (req,res) =>{
 });
 
 // Creo un nuevo usuario
-app.post("/users",Middleware.verify,async (req,res) =>{
+app.post("/users",/* Middleware.verify, */async (req,res) =>{
     
     let name = req.body.name;
     let lastname = req.body.lastname;
@@ -119,7 +119,7 @@ app.post("/users",Middleware.verify,async (req,res) =>{
 });
 
 // Modifico un usuario
-app.put("/users/:id",Middleware.verify,async (req,res) =>{
+app.put("/users/:id",/* Middleware.verify, */async (req,res) =>{
 
     const user = { _id: req.params.id, ...req.body };
     //             {_id: req.params.id, name: req.body.name, lastname, email }
@@ -138,7 +138,7 @@ app.put("/users/:id",Middleware.verify,async (req,res) =>{
 });
 
 // Elimino un usuario
-app.delete("/users/:id",Middleware.verify,async(req,res) =>{
+app.delete("/users/:id",/* Middleware.verify, */async(req,res) =>{
 
     try{
 
@@ -155,7 +155,7 @@ app.delete("/users/:id",Middleware.verify,async(req,res) =>{
 });
 
 // Edito roldes del usuario
-app.put("/users/:id/roles",Middleware.verify,async (req,res) =>{
+app.put("/users/:id/roles",/* Middleware.verify, */async (req,res) =>{
     
     const roles = req.body.roles;
     try{
@@ -172,7 +172,7 @@ app.put("/users/:id/roles",Middleware.verify,async (req,res) =>{
 })
 
 // TODO --> Copia del edit roles para isActive
-app.put("/users/:id/isActive",Middleware.verify,async (req,res) =>{
+app.put("/users/:id/isActive",/* Middleware.verify, */async (req,res) =>{
     
   const isActive = req.body.isActive;
   try{
@@ -225,7 +225,7 @@ app.get("/catalogo/:id",async (req,res) =>{
 });
 
 // Creo un nuevo juego
-app.post("/catalogo",Middleware.verify,async (req,res) =>{
+app.post("/catalogo",/* Middleware.verify, */async (req,res) =>{
     
     let name = req.body.name;
     let author = req.body.author;
@@ -236,6 +236,7 @@ app.post("/catalogo",Middleware.verify,async (req,res) =>{
 
     try{
       const result = await GamesController.addGame(name,author,price,description,category,isActive);
+      console.log("Result:" + result)
       if(result){
         res.status(201).send("Juego creado correctamente"); // 201
       }else{
@@ -248,7 +249,7 @@ app.post("/catalogo",Middleware.verify,async (req,res) =>{
 });
 
 // Modifico un juego
-app.put("/catalogo/:id",Middleware.verify,async (req,res) =>{
+app.put("/catalogo/:id",/* Middleware.verify, */async (req,res) =>{
 
     const game = { _id: req.params.id, ...req.body };
     //             {_id: req.params.id, name: req.body.name, lastname, email }
@@ -267,7 +268,7 @@ app.put("/catalogo/:id",Middleware.verify,async (req,res) =>{
 });
 
 // Elimino un juego
-app.delete("/catalogo/:id",Middleware.verify,async(req,res) =>{
+app.delete("/catalogo/:id",/* Middleware.verify, */async(req,res) =>{
 
     try{
       const result = await GamesController.deleteGame(req.params.id);
@@ -298,14 +299,13 @@ app.put("/catalogo/:id/isActive",async (req,res) =>{
     } 
 });
 
-// TODO --> crear edits particulares para cada propiedad de los juegos?
 
 //-------------------------------------------------------------------------------------------------------
 // ENDPOINTS CART
 //-------------------------------------------------------------------------------------------------------
 
 // Agregar juego a carrito
-app.post("/catalogo/cart/:id",Middleware.verify, async (req,res) => {
+app.post("/catalogo/cart/:id",/* Middleware.verify, */ async (req,res) => {
   let userId = req.params.id;
   let gameName = req.body.gameName;
 
@@ -323,7 +323,7 @@ app.post("/catalogo/cart/:id",Middleware.verify, async (req,res) => {
 });
 
 // Obtener el carrito del ususario
-app.get("/catalogo/cart/:id",Middleware.verify, async(req,res) =>{
+app.get("/catalogo/cart/:id",/* Middleware.verify, */ async(req,res) =>{
   let userId = req.params.id;
   try{
     const result = await CartController.getCart(userId);
@@ -334,7 +334,7 @@ app.get("/catalogo/cart/:id",Middleware.verify, async(req,res) =>{
 });
 
 // Remover item del carrito
-app.delete("/catalogo/cart/:id",Middleware.verify, async(req,res) => {
+app.delete("/catalogo/cart/:id",/* Middleware.verify, */ async(req,res) => {
 
   try{
     const result = await CartController.removeItem(req.params.id,req.body.gameName);
@@ -385,18 +385,12 @@ app.get("/orders/:id", async(req,res) => {
 });
 
 
-app.post("/orders/", async(req,res)=>{
+app.post("/orders/:id", async(req,res)=>{
 
-  let ordnum= req.body.ordnum;
-  let customerid= req.body.customerid;
-  let date= req.body.date;
-  let detail = req.body.detail;
-  let total =req.body.total;
-  let isConfirmed =req.body.isConfirmed;
-  let domicilio = req.body.domicilio;
+  let userId= req.params.id;
+  let street = req.body.street;
   try{
-    console.log(req.body.detail);
-    const result = await OrderController.addOrder(ordnum,customerid,date,detail,total,domicilio,isConfirmed);
+    const result = await OrderController.addOrder(userId,detail,street,isConfirmed);
 
     if ( result){
       res.status(200).send("Orden Creada correctamente") //http 200
@@ -411,8 +405,7 @@ app.post("/orders/", async(req,res)=>{
 });
 
 
-app.delete("/order/:id", async(req,res)=>{
-
+app.delete("/orders/:id", async(req,res)=>{
 
   try{
     const result = await OrderController.deleteOrder(req.params.id);
@@ -426,10 +419,10 @@ app.delete("/order/:id", async(req,res)=>{
   }
 });
 
-app.put("/order/:id", async(req,res)=>{
+app.put("/orders/:id", async(req,res)=>{
 
   const order = { id: req.params.id, ...req.body };
-console.log(order);
+  console.log(order);
   try{
     const result = await OrderController.editOrder(order);
     if (result){

@@ -4,8 +4,9 @@ const Game = require('../models/games');
 const addGame = async (name,author,price,description,category,isActive) => {
 
     let existGame = await Game.findOne({ name: name });
-    console.log(existGame);
+    console.log("ExitGame: "+existGame);
     if(!existGame) {
+        console.log("Ok")
         let data = {              
             name: name,
             author:author,
@@ -15,6 +16,8 @@ const addGame = async (name,author,price,description,category,isActive) => {
             isActive:isActive
         }
         var newGame = new Game(data);
+
+        console.log("NewGame: "+newGame)
         let game = await newGame.save(); 
         console.log("juego nuevo");
         console.log(game);

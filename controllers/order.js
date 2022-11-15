@@ -1,33 +1,32 @@
 require('mongoose');
 const Ord = require('../models/order.js');
-const Cust = require('../models/customer.js');
-const Prod = require('../models/prodduct.js');
+const User = require('../models/user.js');
+const Game = require('../models/games.js');
+const Cart = require('../models/cart.js');
 
-
-
-const addOrder = async(ordId, customerId, date,detail,total,street,isConfirmed ) =>{
-
-    let existOrder = await Ord.findOne({ordId:ordId});
-    if (!existOrder){
-
+const addOrder = async(userId,street) =>{
+    let existUser = await User.findById(userId);
+    console.log("hay usuario");
+    const cart = await Cart.findOne({userId:existUser._id});
+    if(cart){
+        console.log("hay cart");
         const order = new Ord({
-            ordId: ordId,
-            customerId:customerId,
-            date:date,
-            detail:detail,
-            total:total,
+            customerId: cart.userId,
+            date: new Date().toISOString().slice(0, 10),
+            detail:cart.items,
+            total:cart.subTotal,
             street:street,
-            isConfirmed:isConfirmed
+            isConfirmed:true
         })
-        let newOrd = await order.save();
-        console.log("Orden nueva");
-        console.log( newOrd);
-        return { newOrd }; 
-    }else
-    {
-        return(false);
-    };
+        console.log("order armada");
 
+        let newOrd = await order.save();
+        console.log("done");
+        return { newOrd }; 
+    }
+    else{
+        return null;
+    };
 };
 
 

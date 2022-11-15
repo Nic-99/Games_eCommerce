@@ -3,12 +3,12 @@ const Schema = mongoose.Schema();
 const OrdSchema = new mongoose.Schema( 
 {
     
-    ordNum: {
+/*     ordNum: {
         type: Number,
         required:true,
         index: {unique: true, dropDups: true}
 
-    },
+    }, */
     
     customerId:{
         type: mongoose.Schema.Types.ObjectId,
@@ -24,8 +24,9 @@ const OrdSchema = new mongoose.Schema(
     },
     //ACA DEBO VOLCAR EL CONTENIDO DEL CARRO DE COMPRAS
     detail: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cart',
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'Cart',
+        type:[],
         required: true
     },
     total:{
