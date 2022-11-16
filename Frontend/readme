@@ -1,0 +1,28 @@
+Full Stack Frontend
+
+Para la programación del frontend, hemos utilizado los diferentes conceptos vistos en clase.
+
+Registro de usuario (Register.html)
+
+En el diseño de ésta página se utiliza el preprocesador de estilos SCSS, que interpreta la sintaxis de un css tradicional, pero realiza un mapeo dinámico entre las definiciones realizadas en el archivo .scss y  las traduce al archivo styles.css que luego será linkeado en la pagina html <link rel="stylesheet" href="./styles.css">
+Esta forma de trabajar los estilos, centraliza las modificaciones en un único repositorio y que luego son reflejados en todas la páginas del sitio de lo utilicen.
+
+
+Hacemos uso del framework Bootstrap para el styling de la página, motivado en la curva de aprendizaje relativamente baja de esta herramienta y como una aproximación a la misma.
+
+Asimismo en el diseño se hace uso de codigo de programación javascript, para el control del DOM y la conexión con la API
+
+De los diferentes CRUD disponibles en la API del carro de compra, solo se programa la registración de usuarios.
+
+Para la realización del carro de compras, se utiliza bootstrap para el styling de la página, y en la programación se divide la página en templates para trabajar por separado en el DOM,  el carro de compras , los juegos en formato de tarjeta y el footer del carro.
+
+Cada uno de esos  templates se moidfican utilizando fragmentación (fragments) del documento, a fin de evitar el REFLOW y que la página se cargue completa
+cada vez que creamos un elemento.
+
+Cuando el usuario hace la autenticación, se almacena en el sessionStorage, el token y el userid, para reutilizarlo al momento de recobrar el carro de compras que el usuario tenga guardado.
+
+Tambien, se utiliza un elemento  iframe para presentar los articulos disponibles para la compra, los cuales el usuario puede elegir clickeando sobre un botón
+comprar y se añaden al carro, finalmente cuando el usuario decide cerrar la compra se guarda toda la información de la compra.
+
+
+Para toda la conexión con el backend, se utiliza la función fetch().

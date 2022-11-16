@@ -2,6 +2,7 @@ require('mongoose');
 const Lib = require('../models/library');
 const Game = require('../models/games');
 const User = require('../models/user');
+const Cart = require('../models/cart');
 
 const addGame = async (id,name) => {
 

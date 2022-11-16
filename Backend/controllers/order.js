@@ -15,7 +15,7 @@ const addOrder = async(userId,street) =>{
             date: new Date().toISOString().slice(0, 10),
             detail:cart.items,
             total:cart.subTotal,
-            street:street,
+            //street:street,
             isConfirmed:true
         })
         console.log("order armada");
@@ -31,7 +31,7 @@ const addOrder = async(userId,street) =>{
 
 
 const getOrder = async(Id) => {
-    const order = await Ord.findById(Id);
+    const order = await Ord.findOne({userId:Id});
     return order;
 };
 

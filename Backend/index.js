@@ -388,9 +388,9 @@ app.get("/orders/:id", async(req,res) => {
 app.post("/orders/:id", async(req,res)=>{
 
   let userId= req.params.id;
-  let street = req.body.street;
+  //let street = req.body.street;
   try{
-    const result = await OrderController.addOrder(userId,detail,street,isConfirmed);
+    const result = await OrderController.addOrder(userId);//,street);
 
     if ( result){
       res.status(200).send("Orden Creada correctamente") //http 200
@@ -434,4 +434,9 @@ app.put("/orders/:id", async(req,res)=>{
      res.status(500).send("Error.Intente mas tarde");
   };
 });
+
+
+//-------------------------------------------------------------------------------------------------------
+// ENDPOINTS Library
+//-------------------------------------------------------------------------------------------------------
 

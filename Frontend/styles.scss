@@ -1,0 +1,81 @@
+.header{
+
+    height: 50px;
+    background-color:black;
+    color: white;
+    
+    padding: 0.5rem;
+    h1{
+        font-size: 20px;
+        font-family:'Arial';
+        
+    }
+
+}
+
+.Container{
+    
+
+    .Content {
+            display: flex;
+            flex-direction: column ;
+            justify-content:center;
+            margin-left: 30%;
+            width: 100%;
+            
+            background-color:white;
+            padding: 0.5rem 1rem;
+            font-family: 'Arial';
+
+        label{
+                color: black;
+                font-style: bold;
+                width: 80%;
+                height: 50px;
+             
+                
+
+            }
+        
+        #email{
+                margin-left: 3.3%;
+                width: 200px;
+                padding-left: 0.5rem;
+            }
+
+        #name{
+                margin-left: 1.8%;
+                width: 200px;
+                padding-left: 0.5rem;
+            
+        }
+        #lastname{
+                margin-left: 1.8%;
+                width: 200px;
+                padding-left: 0.5rem;
+            
+                }
+        #pass{
+                margin-left: 0.5%;
+                width: 200px;
+                padding-left: 0.5rem;
+            
+            }
+
+
+
+        #register{
+                margin-left: 1%;
+                width: 25%;
+                color: white;
+                font-style: bold;
+                background-color: black;
+                border-color: grey;
+                border-radius: 5px;
+ 
+                
+            
+        }
+}
+
+}
